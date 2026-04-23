@@ -5,7 +5,8 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<!-- ✅ Correct Supabase Version -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 body {
@@ -21,10 +22,7 @@ body {
   padding:20px;
   padding-bottom:80px;
 }
-
-.active {
-  display:block;
-}
+.active { display:block; }
 
 /* Card */
 .card {
@@ -75,22 +73,19 @@ button {
   cursor:pointer;
 }
 
-.nav div.active {
-  color:#ffb347;
-}
+.nav .active { color:#ffb347; }
 
 /* List */
 .list-item {
   padding:10px;
   border-bottom:1px solid rgba(255,255,255,0.1);
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- ADD STUDENT -->
+<!-- ADD -->
 <div id="add" class="page active">
   <h2>Add Student</h2>
   <div class="card">
@@ -115,7 +110,7 @@ button {
   <div class="card" id="recordsList"></div>
 </div>
 
-<!-- NAVIGATION -->
+<!-- NAV -->
 <div class="nav">
   <div onclick="showPage('add')" id="nav-add" class="active">Add</div>
   <div onclick="showPage('record')" id="nav-record">Record</div>
@@ -127,7 +122,9 @@ button {
 /* 🔑 SUPABASE CONFIG */
 const SUPABASE_URL = "https://oduebmjwckfvheslwaqi.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kdWVibWp3Y2tmdmhlc2x3YXFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NDg5MjksImV4cCI6MjA5MjUyNDkyOX0.QFxmheM0WJ6GkO6LtD2P1lOhw9S9VFk46aME3gW3VQs";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* NAVIGATION */
 function showPage(page){
@@ -143,19 +140,29 @@ function showPage(page){
 
 /* ADD STUDENT */
 async function addStudent(){
-  const name = document.getElementById("studentName").value;
+  const name = document.getElementById("studentName").value.trim();
   if(!name) return alert("Enter name");
 
-  await supabase.from('students').insert([{ name }]);
+  const { error } = await db.from('students').insert([{ name }]);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
 
   document.getElementById("studentName").value="";
-  alert("Added!");
+  alert("Student Added");
 }
 
 /* LOAD DROPDOWNS */
 async function loadDropdowns(){
-  const students = await supabase.from('students').select('*');
-  const topics = await supabase.from('topics').select('*');
+  const { data: students, error: e1 } = await db.from('students').select('*');
+  const { data: topics, error: e2 } = await db.from('topics').select('*');
+
+  if(e1 || e2){
+    alert("Error loading data");
+    return;
+  }
 
   const studentSelect = document.getElementById("studentSelect");
   const topicSelect = document.getElementById("topicSelect");
@@ -163,11 +170,11 @@ async function loadDropdowns(){
   studentSelect.innerHTML="";
   topicSelect.innerHTML="";
 
-  students.data.forEach(s=>{
+  students.forEach(s=>{
     studentSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
   });
 
-  topics.data.forEach(t=>{
+  topics.forEach(t=>{
     topicSelect.innerHTML += `<option value="${t.id}">${t.topic_name}</option>`;
   });
 }
@@ -177,14 +184,19 @@ async function addRecord(){
   const student_id = document.getElementById("studentSelect").value;
   const topic_id = document.getElementById("topicSelect").value;
 
-  await supabase.from('records').insert([{ student_id, topic_id }]);
+  const { error } = await db.from('records').insert([{ student_id, topic_id }]);
 
-  alert("Saved!");
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  alert("Record Saved");
 }
 
 /* LOAD RECORDS */
 async function loadRecords(){
-  const { data } = await supabase
+  const { data, error } = await db
     .from('records')
     .select(`
       date,
@@ -193,13 +205,23 @@ async function loadRecords(){
     `)
     .order('date', { ascending:false });
 
+  if(error){
+    alert(error.message);
+    return;
+  }
+
   const list = document.getElementById("recordsList");
   list.innerHTML="";
+
+  if(!data.length){
+    list.innerHTML = "No records yet";
+    return;
+  }
 
   data.forEach(r=>{
     list.innerHTML += `
       <div class="list-item">
-        ${r.students.name} - ${r.topics.topic_name}<br>
+        ${r.students?.name || "Unknown"} - ${r.topics?.topic_name || "Unknown"}<br>
         <small>${r.date}</small>
       </div>
     `;
