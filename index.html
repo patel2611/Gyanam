@@ -2,78 +2,76 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gyanam App</title>
+  <title>Gyanam</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="app.js" defer></script>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header" id="headerTitle">👨‍🎓 Students</div>
+<!-- GLASS HEADER -->
+<div class="topbar" id="headerTitle">Students</div>
 
+<!-- MAIN CONTENT -->
 <div class="container">
 
   <!-- STUDENTS -->
   <div id="studentsPage" class="page">
-    <input id="studentName" placeholder="Enter student name">
 
-    <button onclick="addStudent(document.getElementById('studentName').value)">
-      + Add Student
-    </button>
+    <div class="input-card">
+      <input id="studentName" placeholder="Add new student">
+      <button onclick="addStudent(studentName.value)">Add</button>
+    </div>
 
     <div id="studentList"></div>
   </div>
 
   <!-- RECORDS -->
-  <div id="recordsPage" class="page" style="display:none">
+  <div id="recordsPage" class="page hidden">
 
-    <input id="studentId" placeholder="Student ID">
-    <input id="topicId" placeholder="Topic ID">
-
-    <button onclick="
-      addRecord(
-        document.getElementById('studentId').value,
-        document.getElementById('topicId').value
-      )
-    ">
-      + Add Record
-    </button>
+    <div class="input-card">
+      <input id="studentId" placeholder="Student ID">
+      <input id="topicId" placeholder="Topic ID">
+      <button onclick="addRecord(studentId.value, topicId.value)">Save</button>
+    </div>
 
     <div id="recordList"></div>
   </div>
 
   <!-- VIEW -->
-  <div id="viewPage" class="page" style="display:none">
+  <div id="viewPage" class="page hidden">
 
-    <input id="viewStudentId" placeholder="Enter Student ID">
-
-    <button onclick="viewStudentRecords(document.getElementById('viewStudentId').value)">
-      Load Records
-    </button>
+    <div class="input-card">
+      <input id="viewStudentId" placeholder="Student ID">
+      <button onclick="viewStudentRecords(viewStudentId.value)">Search</button>
+    </div>
 
     <div id="viewList"></div>
   </div>
 
 </div>
 
-<!-- BOTTOM NAV ONLY -->
-<div class="navbar">
+<!-- FLOATING ACTION BUTTON -->
+<div class="fab">+</div>
 
-  <a id="navStudents" onclick="switchTab('students')" class="active">
-    👨‍🎓<br>Students
-  </a>
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
 
-  <a id="navRecords" onclick="switchTab('records')">
-    📝<br>Records
-  </a>
+  <div class="nav-item active" onclick="switchTab('students')">
+    👨‍🎓<span>Students</span>
+  </div>
 
-  <a id="navView" onclick="switchTab('view')">
-    👁<br>View
-  </a>
+  <div class="nav-item" onclick="switchTab('records')">
+    📝<span>Records</span>
+  </div>
+
+  <div class="nav-item" onclick="switchTab('view')">
+    👁<span>View</span>
+  </div>
 
 </div>
 
