@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background: linear-gradient(135deg,#1e1e2f,#2a2a40);
+  color:white;
+}
+
+/* Pages */
+.page {
+  display:none;
+  padding:20px;
+  padding-bottom:80px;
+}
+
+.active {
+  display:block;
+}
+
+/* Card */
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:15px;
+}
+
+/* Input */
+input, select {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background:#2f2f45;
+  color:white;
+}
+
+/* Button */
+button {
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#ff7a18,#ffb347);
+  color:white;
+  font-weight:600;
+}
+
+/* Bottom Nav */
+.nav {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  background:#1c1c2e;
+  padding:10px 0;
+}
+
+.nav div {
+  text-align:center;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.nav div.active {
+  color:#ffb347;
+}
+
+/* List */
+.list-item {
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ADD STUDENT -->
+<div id="add" class="page active">
+  <h2>Add Student</h2>
+  <div class="card">
+    <input type="text" id="studentName" placeholder="Enter student name">
+    <button onclick="addStudent()">Add Student</button>
+  </div>
+</div>
+
+<!-- RECORD -->
+<div id="record" class="page">
+  <h2>Add Record</h2>
+  <div class="card">
+    <select id="studentSelect"></select>
+    <select id="topicSelect"></select>
+    <button onclick="addRecord()">Save Record</button>
+  </div>
+</div>
+
+<!-- VIEW -->
+<div id="view" class="page">
+  <h2>Records</h2>
+  <div class="card" id="recordsList"></div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="nav">
+  <div onclick="showPage('add')" id="nav-add" class="active">Add</div>
+  <div onclick="showPage('record')" id="nav-record">Record</div>
+  <div onclick="showPage('view')" id="nav-view">View</div>
+</div>
+
+<script>
+
+/* 🔑 SUPABASE CONFIG */
+const SUPABASE_URL = "YOUR_URL";
+const SUPABASE_KEY = "YOUR_KEY";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* NAVIGATION */
+function showPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+
+  document.querySelectorAll('.nav div').forEach(n=>n.classList.remove('active'));
+  document.getElementById("nav-"+page).classList.add('active');
+
+  if(page === "record") loadDropdowns();
+  if(page === "view") loadRecords();
+}
+
+/* ADD STUDENT */
+async function addStudent(){
+  const name = document.getElementById("studentName").value;
+  if(!name) return alert("Enter name");
+
+  await supabase.from('students').insert([{ name }]);
+
+  document.getElementById("studentName").value="";
+  alert("Added!");
+}
+
+/* LOAD DROPDOWNS */
+async function loadDropdowns(){
+  const students = await supabase.from('students').select('*');
+  const topics = await supabase.from('topics').select('*');
+
+  const studentSelect = document.getElementById("studentSelect");
+  const topicSelect = document.getElementById("topicSelect");
+
+  studentSelect.innerHTML="";
+  topicSelect.innerHTML="";
+
+  students.data.forEach(s=>{
+    studentSelect.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+  });
+
+  topics.data.forEach(t=>{
+    topicSelect.innerHTML += `<option value="${t.id}">${t.topic_name}</option>`;
+  });
+}
+
+/* ADD RECORD */
+async function addRecord(){
+  const student_id = document.getElementById("studentSelect").value;
+  const topic_id = document.getElementById("topicSelect").value;
+
+  await supabase.from('records').insert([{ student_id, topic_id }]);
+
+  alert("Saved!");
+}
+
+/* LOAD RECORDS */
+async function loadRecords(){
+  const { data } = await supabase
+    .from('records')
+    .select(`
+      date,
+      students(name),
+      topics(topic_name)
+    `)
+    .order('date', { ascending:false });
+
+  const list = document.getElementById("recordsList");
+  list.innerHTML="";
+
+  data.forEach(r=>{
+    list.innerHTML += `
+      <div class="list-item">
+        ${r.students.name} - ${r.topics.topic_name}<br>
+        <small>${r.date}</small>
+      </div>
+    `;
+  });
+}
+
+</script>
+
+</body>
+</html>
