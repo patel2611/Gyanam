@@ -15,12 +15,10 @@
 <!-- HEADER -->
 <div class="header" id="headerTitle">👨‍🎓 Students</div>
 
-<!-- APP CONTAINER -->
 <div class="container">
 
-  <!-- ================= STUDENTS PAGE ================= -->
-  <div class="page" id="studentsPage">
-
+  <!-- STUDENTS -->
+  <div id="studentsPage" class="page">
     <input id="studentName" placeholder="Enter student name">
 
     <button onclick="addStudent(document.getElementById('studentName').value)">
@@ -30,8 +28,8 @@
     <div id="studentList"></div>
   </div>
 
-  <!-- ================= RECORDS PAGE ================= -->
-  <div class="page" id="recordsPage" style="display:none">
+  <!-- RECORDS -->
+  <div id="recordsPage" class="page" style="display:none">
 
     <input id="studentId" placeholder="Student ID">
     <input id="topicId" placeholder="Topic ID">
@@ -48,8 +46,8 @@
     <div id="recordList"></div>
   </div>
 
-  <!-- ================= VIEW PAGE ================= -->
-  <div class="page" id="viewPage" style="display:none">
+  <!-- VIEW -->
+  <div id="viewPage" class="page" style="display:none">
 
     <input id="viewStudentId" placeholder="Enter Student ID">
 
@@ -62,18 +60,18 @@
 
 </div>
 
-<!-- BOTTOM NAVIGATION -->
+<!-- BOTTOM NAV ONLY -->
 <div class="navbar">
 
-  <a onclick="showPage('students')" id="navStudents" class="active">
+  <a id="navStudents" onclick="switchTab('students')" class="active">
     👨‍🎓<br>Students
   </a>
 
-  <a onclick="showPage('records')" id="navRecords">
+  <a id="navRecords" onclick="switchTab('records')">
     📝<br>Records
   </a>
 
-  <a onclick="showPage('view')" id="navView">
+  <a id="navView" onclick="switchTab('view')">
     👁<br>View
   </a>
 
