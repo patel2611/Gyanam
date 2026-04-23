@@ -2,32 +2,80 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gyanam App</title>
+
   <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="app.js" defer></script>
 </head>
 
 <body>
 
-<div class="header">📘 Gyanam Dashboard</div>
+<!-- HEADER -->
+<div class="header" id="headerTitle">👨‍🎓 Students</div>
 
+<!-- APP CONTAINER -->
 <div class="container">
 
-  <div class="card">
-    <h3>👨‍🎓 Students</h3>
-    <p>Manage student records</p>
-    <a href="students.html"><button>Open</button></a>
+  <!-- ================= STUDENTS PAGE ================= -->
+  <div class="page" id="studentsPage">
+
+    <input id="studentName" placeholder="Enter student name">
+
+    <button onclick="addStudent(document.getElementById('studentName').value)">
+      + Add Student
+    </button>
+
+    <div id="studentList"></div>
   </div>
 
-  <div class="card">
-    <h3>📝 Records</h3>
-    <p>Add spoken topics</p>
-    <a href="records.html"><button>Open</button></a>
+  <!-- ================= RECORDS PAGE ================= -->
+  <div class="page" id="recordsPage" style="display:none">
+
+    <input id="studentId" placeholder="Student ID">
+    <input id="topicId" placeholder="Topic ID">
+
+    <button onclick="
+      addRecord(
+        document.getElementById('studentId').value,
+        document.getElementById('topicId').value
+      )
+    ">
+      + Add Record
+    </button>
+
+    <div id="recordList"></div>
   </div>
 
-  <div class="card">
-    <h3>👁 View</h3>
-    <p>Track student progress</p>
-    <a href="view.html"><button>Open</button></a>
+  <!-- ================= VIEW PAGE ================= -->
+  <div class="page" id="viewPage" style="display:none">
+
+    <input id="viewStudentId" placeholder="Enter Student ID">
+
+    <button onclick="viewStudentRecords(document.getElementById('viewStudentId').value)">
+      Load Records
+    </button>
+
+    <div id="viewList"></div>
   </div>
+
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<div class="navbar">
+
+  <a onclick="showPage('students')" id="navStudents" class="active">
+    👨‍🎓<br>Students
+  </a>
+
+  <a onclick="showPage('records')" id="navRecords">
+    📝<br>Records
+  </a>
+
+  <a onclick="showPage('view')" id="navView">
+    👁<br>View
+  </a>
 
 </div>
 
