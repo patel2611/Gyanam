@@ -1,52 +1,34 @@
-// ==========================
-// SUPABASE INIT (keep yours)
-// ==========================
-const SUPABASE_URL = "https://osnbqkefnoqsssnyirfk.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zbmJxa2Vmbm9xc3NzbnlpcmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjQwNzMsImV4cCI6MjA5MjUwMDA3M30.M7F6dRhYb0-nMqCiL9XyUL6WXcHq5UU7yf61RJ05ct0";
+// Supabase
+const supabase = supabaseJs.createClient(
+  "https://osnbqkefnoqsssnyirfk.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zbmJxa2Vmbm9xc3NzbnlpcmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjQwNzMsImV4cCI6MjA5MjUwMDA3M30.M7F6dRhYb0-nMqCiL9XyUL6WXcHq5UU7yf61RJ05ct0"
+);
 
-
-const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// ==========================
-// TAB SWITCHING (NO HOME EVER)
-// ==========================
+// NAVIGATION
 function switchTab(tab) {
 
-  // hide all
-  document.getElementById("studentsPage").style.display = "none";
-  document.getElementById("recordsPage").style.display = "none";
-  document.getElementById("viewPage").style.display = "none";
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
 
-  // remove active
-  document.getElementById("navStudents").classList.remove("active");
-  document.getElementById("navRecords").classList.remove("active");
-  document.getElementById("navView").classList.remove("active");
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-  // show selected
-  if (tab === "students") {
-    document.getElementById("studentsPage").style.display = "block";
-    document.getElementById("navStudents").classList.add("active");
-    document.getElementById("headerTitle").innerText = "👨‍🎓 Students";
-    loadStudents();
+  if (tab === 'students') {
+    studentsPage.classList.remove('hidden');
+    document.querySelectorAll('.nav-item')[0].classList.add('active');
+    headerTitle.innerText = "Students";
   }
 
-  if (tab === "records") {
-    document.getElementById("recordsPage").style.display = "block";
-    document.getElementById("navRecords").classList.add("active");
-    document.getElementById("headerTitle").innerText = "📝 Records";
-    loadRecords();
+  if (tab === 'records') {
+    recordsPage.classList.remove('hidden');
+    document.querySelectorAll('.nav-item')[1].classList.add('active');
+    headerTitle.innerText = "Records";
   }
 
-  if (tab === "view") {
-    document.getElementById("viewPage").style.display = "block";
-    document.getElementById("navView").classList.add("active");
-    document.getElementById("headerTitle").innerText = "👁 View";
+  if (tab === 'view') {
+    viewPage.classList.remove('hidden');
+    document.querySelectorAll('.nav-item')[2].classList.add('active');
+    headerTitle.innerText = "View";
   }
 }
 
-// ==========================
-// AUTO START → STUDENTS ONLY
-// ==========================
-window.onload = function () {
-  switchTab("students"); // 🔥 DIRECT START HERE
-};
+// START APP DIRECTLY
+window.onload = () => switchTab('students');
