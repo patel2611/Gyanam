@@ -77,3 +77,22 @@ button {
   color: #2d6cdf;
   font-weight: 600;
 }
+
+.page {
+  animation: fade 0.2s ease-in;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ACTIVE TAB STYLE */
+.navbar a {
+  cursor: pointer;
+}
+
+.navbar a.active {
+  color: #2d6cdf;
+  font-weight: 700;
+}
