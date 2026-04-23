@@ -4,46 +4,47 @@
 const SUPABASE_URL = "https://osnbqkefnoqsssnyirfk.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zbmJxa2Vmbm9xc3NzbnlpcmZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjQwNzMsImV4cCI6MjA5MjUwMDA3M30.M7F6dRhYb0-nMqCiL9XyUL6WXcHq5UU7yf61RJ05ct0";
 
+
 const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ==========================
-// PAGE NAVIGATION SYSTEM
+// NAVIGATION SYSTEM
 // ==========================
 function showPage(page) {
 
   // hide all pages
-  document.getElementById("studentsPage").style.display = "none";
-  document.getElementById("recordsPage").style.display = "none";
-  document.getElementById("viewPage").style.display = "none";
+  const pages = ["students", "records", "view"];
+  pages.forEach(p => {
+    document.getElementById(p + "Page").style.display = "none";
+    document.getElementById("nav" + capitalize(p)).classList.remove("active");
+  });
 
-  // reset nav active state
-  document.getElementById("navStudents").classList.remove("active");
-  document.getElementById("navRecords").classList.remove("active");
-  document.getElementById("navView").classList.remove("active");
+  // show selected page
+  document.getElementById(page + "Page").style.display = "block";
+  document.getElementById("nav" + capitalize(page)).classList.add("active");
 
-  // show selected page + set header
-  if (page === "students") {
-    document.getElementById("studentsPage").style.display = "block";
-    document.getElementById("navStudents").classList.add("active");
-    document.getElementById("headerTitle").innerText = "👨‍🎓 Students";
-    loadStudents();
-  }
+  // update header
+  const titles = {
+    students: "👨‍🎓 Students",
+    records: "📝 Records",
+    view: "👁 View"
+  };
 
-  if (page === "records") {
-    document.getElementById("recordsPage").style.display = "block";
-    document.getElementById("navRecords").classList.add("active");
-    document.getElementById("headerTitle").innerText = "📝 Records";
-    loadRecords();
-  }
+  document.getElementById("headerTitle").innerText = titles[page];
 
-  if (page === "view") {
-    document.getElementById("viewPage").style.display = "block";
-    document.getElementById("navView").classList.add("active");
-    document.getElementById("headerTitle").innerText = "👁 View";
-  }
+  // load data
+  if (page === "students") loadStudents();
+  if (page === "records") loadRecords();
 }
 
-// default page
-window.onload = () => {
-  showPage("students");
+// ==========================
+// AUTO START APP HERE 🔥
+// ==========================
+window.onload = function () {
+  showPage("students"); // 👈 APP OPENS DIRECTLY HERE
 };
+
+// helper
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
